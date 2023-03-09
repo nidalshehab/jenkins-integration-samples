@@ -33,7 +33,6 @@ pipeline {
 	    agent {
     	    	kubernetes {
       		    cloud 'kubernetes'
-      		    label 'maven-pod'
       		    yamlFile 'jenkins/maven-pod.yaml'
 		}
 	    }
@@ -61,7 +60,6 @@ pipeline {
             agent {
     	    	kubernetes {
       		    cloud 'kubernetes'
-      		    label 'kaniko-pod'
       		    yamlFile 'jenkins/kaniko-pod.yaml'
 		}
 	    }
@@ -80,7 +78,6 @@ pipeline {
             agent {
     	        kubernetes {
       		    cloud 'kubernetes'
-      		    label 'gke-deploy'
 		    yamlFile 'jenkins/gke-deploy-pod.yaml'
 		}
             }
@@ -106,7 +103,6 @@ pipeline {
             agent {
     	        kubernetes {
       		    cloud 'kubernetes'
-      		    label 'gke-deploy'
 		    yamlFile 'jenkins/gke-deploy-pod.yaml'
 		}
             }
