@@ -34,7 +34,7 @@ pipeline {
     	    	kubernetes {
       		    cloud 'kubernetes'
       		    label 'maven-pod'
-      		    yamlFile 'gke/jenkins/maven-pod.yaml'
+      		    yamlFile 'jenkins/maven-pod.yaml'
 		}
 	    }
 	    steps {
@@ -62,7 +62,7 @@ pipeline {
     	    	kubernetes {
       		    cloud 'kubernetes'
       		    label 'kaniko-pod'
-      		    yamlFile 'gke/jenkins/kaniko-pod.yaml'
+      		    yamlFile 'jenkins/kaniko-pod.yaml'
 		}
 	    }
 	    environment {
@@ -71,7 +71,7 @@ pipeline {
 	    steps {
 	        container(name: 'kaniko', shell: '/busybox/sh') {
 		    sh '''#!/busybox/sh
-		    /kaniko/executor -f `pwd`/gke/Dockerfile -c `pwd` --context="gs://${BUILD_CONTEXT_BUCKET}/${BUILD_CONTEXT}" --destination="${GCR_IMAGE}" --build-arg JAR_FILE="${APP_JAR}"
+		    /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --context="gs://${BUILD_CONTEXT_BUCKET}/${BUILD_CONTEXT}" --destination="${GCR_IMAGE}" --build-arg JAR_FILE="${APP_JAR}"
 		    '''
 		}
 	    }
@@ -81,13 +81,13 @@ pipeline {
     	        kubernetes {
       		    cloud 'kubernetes'
       		    label 'gke-deploy'
-		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
+		    yamlFile 'jenkins/gke-deploy-pod.yaml'
 		}
             }
 	    steps{
 		container('gke-deploy') {
-		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.STAGING_CLUSTER, location: env.PROJECT_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENK_INT_IT_CRED_ID, verifyDeployments: true])
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.STAGING_CLUSTER, location: env.PROJECT_ZONE, manifestPattern: 'kubernetes/manifest.yaml', credentialsId: env.JENK_INT_IT_CRED_ID, verifyDeployments: true])
 		}
             }
 	}
@@ -107,13 +107,13 @@ pipeline {
     	        kubernetes {
       		    cloud 'kubernetes'
       		    label 'gke-deploy'
-		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
+		    yamlFile 'jenkins/gke-deploy-pod.yaml'
 		}
             }
 	    steps{
 		container('gke-deploy') {
-		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.PROD_CLUSTER, location: env.PROJECT_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENK_INT_IT_CRED_ID, verifyDeployments: true])
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.PROD_CLUSTER, location: env.PROJECT_ZONE, manifestPattern: 'kubernetes/manifest.yaml', credentialsId: env.JENK_INT_IT_CRED_ID, verifyDeployments: true])
 		}
             }
 	}
